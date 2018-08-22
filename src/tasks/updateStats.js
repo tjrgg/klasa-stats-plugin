@@ -26,40 +26,24 @@ const mergeRuntime = (a, b) => {
 module.exports = class extends Task {
   async run() {
     /* Messages Stats */
-    const msgOverallCount = this.client.stats.messages.lastMinute
-      + this.client.settings.messages.overall.count;
-    await this.client.settings.update('messages.overall.count', msgOverallCount);
-
-    const msgLastMinute = this.client.settings.messages.lastMinute;
-    if (msgLastMinute.length >= 60) {
-      await this.client.settings.update('messages.lastMinute', msgLastMinute[0], {
-        arrayPosition: 0,
-        action: 'remove',
-      });
-    }
-    await this.client.settings.update('messages.lastMinute', this.client.stats.messages.lastMinute, {
-      action: 'add',
-    });
+    const msg = this.client.settings.messages;
+    msg.overall.count += this.stats.messages.lastMinute;
+    if (msg.lastMinute.length >= 60) msg.lastMinute.shift();
+    msg.lastMinute.push(this.client.stats.messages.lastMinute);
+    this.client.settings.update('messages', msg);
 
     /* Commands Stats */
-    const commandRun = mergeRuntime(this.client.settings.commands.overall.ran,
+    const cmd = this.client.settings.commands;
+    cmd.overall.ran = mergeRuntime(this.client.settings.commands.overall.ran,
       mapToObj(this.client.stats.commands.overall.ran));
-    await this.client.settings.update('commands.overall.ran', commandRun);
+    cmd.overall.count += this.client.stats.commands.lastMinute;
+    if (cmd.lastMinute.length) cmd.lastMinute.shift();
+    cmd.lastMinute.push(this.client.stats.commands.lastMinute);
+    this.client.settings.update('commands', cmd);
 
     const cmdOverallCount = this.client.stats.commands.lastMinute
       + this.client.settings.commands.overall.count;
     await this.client.settings.update('commands.overall.count', cmdOverallCount);
-
-    const cmdLastMinute = this.client.settings.commands.lastMinute;
-    if (cmdLastMinute.length >= 60) {
-      await this.client.settings.update('commands.lastMinute', cmdLastMinute[0], {
-        arrayPosition: 0,
-        action: 'remove',
-      });
-    }
-    await this.client.settings.update('commands.lastMinute', this.client.stats.commands.lastMinute, {
-      action: 'add',
-    });
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;

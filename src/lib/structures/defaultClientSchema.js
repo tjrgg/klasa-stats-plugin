@@ -1,20 +1,20 @@
 const { Client } = require('klasa');
 
 Client.defaultClientSchema
-  .add('commands', (folder) => {
-    folder
-      .add('overall', (subfolder) => {
-        subfolder
-          .add('count', 'integer', { default: 0 })
-          .add('ran', 'any', { default: {} });
-      })
-      .add('lastMinute', 'integer', { array: true, default: new Array(60).fill(0) });
+  .add('commands', 'any', {
+    default: {
+      overall: {
+        count: 0,
+        ran: {},
+      },
+      lastMinute: new Array(60).fill(0),
+    },
   })
-  .add('messages', (folder) => {
-    folder
-      .add('overall', (subfolder) => {
-        subfolder
-          .add('count', 'integer', { default: 0 });
-      })
-      .add('lastMinute', 'integer', { array: true, default: new Array(60).fill(0) });
+  .add('messages', 'any', {
+    default: {
+      overall: {
+        count: 0,
+      },
+      integer: new Array(60).fill(0),
+    },
   });
