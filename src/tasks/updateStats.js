@@ -31,9 +31,14 @@ module.exports = class extends Task {
     await this.client.settings.update('messages.overall.count', msgOverallCount);
 
     const msgLastMinute = this.client.settings.messages.lastMinute;
-    if (msgLastMinute.length >= 60) msgLastMinute.shift();
-    msgLastMinute.push(this.client.stats.messages.lastMinute);
-    await this.client.settings.update('messages.lastMinute', msgLastMinute);
+    if (msgLastMinute.length >= 60) {
+      await this.client.settings.update('messages.lastMinute', msgLastMinute[0], {
+        action: 'remove',
+      });
+    }
+    await this.client.settings.update('messages.lastMinute', this.client.stats.messages.lastMinute, {
+      action: 'add',
+    });
 
     /* Commands Stats */
     const commandRun = mergeRuntime(this.client.settings.commands.overall.ran,
@@ -45,9 +50,14 @@ module.exports = class extends Task {
     await this.client.settings.update('commands.overall.count', cmdOverallCount);
 
     const cmdLastMinute = this.client.settings.commands.lastMinute;
-    if (cmdLastMinute.length >= 60) cmdLastMinute.shift();
-    cmdLastMinute.push(this.client.stats.commands.lastMinute);
-    await this.client.settings.update('commands.lastMinute', cmdLastMinute);
+    if (cmdLastMinute.length >= 60) {
+      await this.client.settings.update('commands.lastMinute', cmdLastMinute[0], {
+        action: 'remove',
+      });
+    }
+    await this.client.settings.update('commands.lastMinute', this.client.stats.commands.lastMinute, {
+      action: 'add',
+    });
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;
