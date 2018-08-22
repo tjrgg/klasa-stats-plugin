@@ -30,7 +30,7 @@ module.exports = class extends Task {
       + this.client.settings.messages.overall.count;
     await this.client.settings.update('messages.overall.ran', msgOverallCount);
 
-    const msgLastMinute = this.client.settings.lastMinute;
+    const msgLastMinute = this.client.settings.messages.lastMinute;
     if (msgLastMinute.length >= 60) msgLastMinute.shift();
     msgLastMinute.push(this.client.stats.messages.lastMinute);
     await this.client.settings.update('messages.lastMinute', msgLastMinute);
