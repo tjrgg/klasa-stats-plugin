@@ -44,7 +44,7 @@ module.exports = class extends Task {
       + this.client.settings.commands.overall.count;
     await this.client.settings.update('commands.overall.count', cmdOverallCount);
 
-    const cmdLastMinute = this.client.settings.commands.overall.lastMinute;
+    const cmdLastMinute = this.client.settings.commands.lastMinute;
     if (cmdLastMinute.length >= 60) cmdLastMinute.shift();
     cmdLastMinute.push(this.client.stats.commands.lastMinute);
     await this.client.settings.update('commands.lastMinute', cmdLastMinute);
