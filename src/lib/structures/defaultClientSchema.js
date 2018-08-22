@@ -1,6 +1,6 @@
 const { Client } = require('klasa');
 
-Client
+Client.defaultClientSchema
   .add('commands', (folder) => {
     folder
       .add('overall', (subfolder) => {
