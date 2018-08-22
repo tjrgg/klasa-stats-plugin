@@ -33,6 +33,7 @@ module.exports = class extends Task {
     const msgLastMinute = this.client.settings.messages.lastMinute;
     if (msgLastMinute.length >= 60) {
       await this.client.settings.update('messages.lastMinute', msgLastMinute[0], {
+        arrayPosition: 0,
         action: 'remove',
       });
     }
@@ -52,6 +53,7 @@ module.exports = class extends Task {
     const cmdLastMinute = this.client.settings.commands.lastMinute;
     if (cmdLastMinute.length >= 60) {
       await this.client.settings.update('commands.lastMinute', cmdLastMinute[0], {
+        arrayPosition: 0,
         action: 'remove',
       });
     }
