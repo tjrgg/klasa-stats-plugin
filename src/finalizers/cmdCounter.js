@@ -6,13 +6,14 @@ module.exports = class extends Finalizer {
   }
 
   async run(message, response, runTime) {
-    const cmd = this.client.stats.commands.overall.ran.get(message.command.name);
+    let cmd = this.client.stats.commands.overall.ran.get(message.command.name);
     if (!cmd) {
       this.client.stats.commands.overall.ran.set(message.command.name, {
         count: 0,
         executions: [],
       });
     }
+    cmd = this.client.stats.commands.overall.ran.get(message.command.name);
     const { executions } = cmd;
     if (executions.length >= 20) executions.shift();
     executions.push(runTime);
