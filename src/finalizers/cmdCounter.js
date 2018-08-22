@@ -16,7 +16,7 @@ module.exports = class extends Finalizer {
     cmd = this.client.stats.commands.overall.ran.get(message.command.name);
     const { executions } = cmd;
     if (executions.length >= 20) executions.shift();
-    executions.push(runTime.stop());
+    executions.push(runTime.stop().duration);
 
     this.client.stats.commands.overall.ran.set(message.command.name, {
       count: cmd.count + 1,
