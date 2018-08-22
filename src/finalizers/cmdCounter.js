@@ -23,6 +23,6 @@ module.exports = class extends Finalizer {
       executions,
     });
     this.client.stats.commands.overall.count += 1;
-    this.client.stats.commandslastMinute += 1;
+    this.client.stats.commands.lastMinute += 1;
   }
 };
