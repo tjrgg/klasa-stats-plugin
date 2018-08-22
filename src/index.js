@@ -1,5 +1,8 @@
+/* eslint-disable global-require */
 const { Client: { plugin } } = require('klasa');
 
 module.exports = {
-  [plugin]: require('./lib/Client')[plugin], // eslint-disable-line
+  StatsClient: require('./lib/Client'),
+  Client: require('./lib/Client'),
+  [plugin]: require('./lib/Client')[plugin],
 };
