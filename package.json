@@ -8,9 +8,8 @@
   },
   "author": "1Conan",
   "license": "MIT",
-  "dependencies": {
-    "discord.js": "github:discordjs/discord.js",
-    "klasa": "github:dirigeants/klasa"
+  "peerDependencies": {
+    "klasa": "github:dirigeants/klasa#master"
   },
   "devDependencies": {
     "eslint": "^5.4.0",
