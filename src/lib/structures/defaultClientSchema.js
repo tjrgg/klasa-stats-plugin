@@ -15,6 +15,6 @@ Client.defaultClientSchema
       overall: {
         count: 0,
       },
-      integer: new Array(60).fill(0),
+      lastMinute: new Array(60).fill(0),
     },
   });
