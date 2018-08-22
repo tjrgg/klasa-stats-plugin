@@ -30,7 +30,7 @@ module.exports = class extends Task {
     msg.overall.count += this.client.stats.messages.lastMinute;
     if (msg.lastMinute.length >= 60) msg.lastMinute.shift();
     msg.lastMinute.push(this.client.stats.messages.lastMinute);
-    this.client.settings.update('messages', msg);
+    
 
     /* Commands Stats */
     const cmd = this.client.settings.commands;
@@ -39,10 +39,13 @@ module.exports = class extends Task {
     cmd.overall.count += this.client.stats.commands.lastMinute;
     if (cmd.lastMinute.length) cmd.lastMinute.shift();
     cmd.lastMinute.push(this.client.stats.commands.lastMinute);
-    this.client.settings.update('commands', cmd);
+
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;
+
+    await this.client.settings.update('messages', msg);
+    await this.client.settings.update('commands', cmd);
   }
 
   async init() {
