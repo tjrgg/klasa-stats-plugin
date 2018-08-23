@@ -1,5 +1,7 @@
 const { Task } = require('klasa');
 
+const unixTs = () => Math.round((new Date()).getTime() / 1000);
+
 const mapToObj = (aMap) => {
   const obj = {};
   aMap.forEach((v, k) => { obj[k] = v; });
@@ -26,26 +28,39 @@ const mergeRuntime = (a, b) => {
 module.exports = class extends Task {
   async run() {
     /* Messages Stats */
-    const msg = this.client.settings.messages;
-    msg.overall.count += this.client.stats.messages.lastMinute;
-    if (msg.lastMinute.length >= 60) msg.lastMinute.shift();
-    msg.lastMinute.push(this.client.stats.messages.lastMinute);
-    
+    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
+    const msgLastMinute = this.client.stats.messages.lastMinute;
+
 
     /* Commands Stats */
-    const cmd = this.client.settings.commands;
-    cmd.overall.ran = mergeRuntime(this.client.settings.commands.overall.ran,
-      mapToObj(this.client.stats.commands.overall.ran));
-    cmd.overall.count += this.client.stats.commands.lastMinute;
-    if (cmd.lastMinute.length) cmd.lastMinute.shift();
-    cmd.lastMinute.push(this.client.stats.commands.lastMinute);
+    const cmdRan = mergeRuntime(this.client.settings.commands.ran,
+      mapToObj(this.client.stats.commands.ran));
+    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
+    const cmdLastMinute = this.client.stats.commands.lastMinute;
 
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;
 
-    await this.client.settings.update('messages', msg);
-    await this.client.settings.update('commands', cmd);
+    const timestamp = unixTs();
+
+    await this.client.settings.update('messages.overall', msgCount);
+    if (this.client.settings.messages.lastMinute.length >= 60) {
+      await this.client.settings.update('messages.lastMinute', this.client.settings.messages.lastMinute[0], { arrayPosition: 0, action: 'remove' });
+    }
+    await this.client.settings.update('messages.lastMinute', {
+      timestamp,
+      count: msgLastMinute,
+    }, { action: 'add' });
+    await this.client.settings.update('commands.overall', cmdCount);
+    await this.client.settings.update('commands.ran', cmdRan);
+    if (this.client.settings.commands.lastMinute.length >= 60) {
+      await this.client.settings.update('commands.lastMinute', this.client.settings.messages.lastMinute[0], { arrayPosition: 0, action: 'remove' });
+    }
+    await this.client.settings.update('commands.lastMinute', {
+      timestamp,
+      count: cmdLastMinute,
+    }, { action: 'add' });
   }
 
   async init() {

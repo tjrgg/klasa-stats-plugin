@@ -9,6 +9,7 @@
   "author": "1Conan",
   "license": "MIT",
   "peerDependencies": {
+    "discord.js": "github:discordjs/discord.js#master",
     "klasa": "github:dirigeants/klasa#master"
   },
   "devDependencies": {

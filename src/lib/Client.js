@@ -13,16 +13,12 @@ class StatsClient extends Client {
   static [Client.plugin]() {
     this.stats = {
       commands: {
-        overall: {
-          count: 0,
-          ran: new Collection(),
-        },
+        overall: 0,
+        ran: new Collection(),
         lastMinute: 0,
       },
       messages: {
-        overall: {
-          count: 0,
-        },
+        overall: 0,
         lastMinute: 0,
       },
     };
