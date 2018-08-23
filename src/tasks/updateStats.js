@@ -44,7 +44,7 @@ module.exports = class extends Task {
 
     const timestamp = unixTs();
 
-    await this.client.settings.update('messages.overall', msgCount);
+    await this.client.settings.update('messages.overall', msgCount, { force: true });
     if (this.client.settings.messages.lastMinute.length >= 60) {
       await this.client.settings.update('messages.lastMinute', this.client.settings.messages.lastMinute[0], { arrayPosition: 0, action: 'remove' });
     }
@@ -52,7 +52,7 @@ module.exports = class extends Task {
       timestamp,
       count: msgLastMinute,
     }, { action: 'add' });
-    await this.client.settings.update('commands.overall', cmdCount);
+    await this.client.settings.update('commands.overall', cmdCount, { force: true });
     await this.client.settings.update('commands.ran', cmdRan);
     if (this.client.settings.commands.lastMinute.length >= 60) {
       await this.client.settings.update('commands.lastMinute', this.client.settings.commands.lastMinute[0], { arrayPosition: 0, action: 'remove' });
