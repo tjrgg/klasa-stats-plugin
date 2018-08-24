@@ -27,40 +27,41 @@ const mergeRuntime = (a, b) => {
 
 module.exports = class extends Task {
   async run() {
+    const timestamp = unixTs();
+
     /* Messages Stats */
     const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
-    const msgLastMinute = this.client.stats.messages.lastMinute;
+    await this.client.settings.update('messages.overall', msgCount, { force: true });
 
+    const msgLastMinute = this.client.stats.messages.lastMinute;
+    const settingsMsgLastMinute = this.client.settings.messages.lastMinute;
+    if (settingsMsgLastMinute.length >= 60) settingsMsgLastMinute.shift();
+    settingsMsgLastMinute.push({
+      timestamp,
+      count: msgLastMinute,
+    });
+    await this.client.settings.update('messages.lastMinute', settingsMsgLastMinute, { action: 'overwrite' });
 
     /* Commands Stats */
     const cmdRan = mergeRuntime(this.client.settings.commands.ran,
       mapToObj(this.client.stats.commands.ran));
-    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
-    const cmdLastMinute = this.client.stats.commands.lastMinute;
+    await this.client.settings.update('commands.ran', cmdRan);
 
+
+    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
+    await this.client.settings.update('commands.overall', cmdCount, { force: true });
+
+    const cmdLastMinute = this.client.stats.commands.lastMinute;
+    const settingsCmdLastMinute = this.client.settings.commands.lastMinute;
+    if (settingsCmdLastMinute.length >= 60) settingsCmdLastMinute.shift();
+    settingsCmdLastMinute.push({
+      timestamp,
+      count: cmdLastMinute,
+    });
+    await this.client.settings.update('commands.lastMinute', settingsCmdLastMinute, { action: 'overwrite' });
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;
-
-    const timestamp = unixTs();
-
-    await this.client.settings.update('messages.overall', msgCount, { force: true });
-    if (this.client.settings.messages.lastMinute.length >= 60) {
-      await this.client.settings.update('messages.lastMinute', this.client.settings.messages.lastMinute[0], { arrayPosition: 0, action: 'remove' });
-    }
-    await this.client.settings.update('messages.lastMinute', {
-      timestamp,
-      count: msgLastMinute,
-    }, { action: 'add' });
-    await this.client.settings.update('commands.overall', cmdCount, { force: true });
-    await this.client.settings.update('commands.ran', cmdRan);
-    if (this.client.settings.commands.lastMinute.length >= 60) {
-      await this.client.settings.update('commands.lastMinute', this.client.settings.commands.lastMinute[0], { arrayPosition: 0, action: 'remove' });
-    }
-    await this.client.settings.update('commands.lastMinute', {
-      timestamp,
-      count: cmdLastMinute,
-    }, { action: 'add' });
   }
 
   async init() {
