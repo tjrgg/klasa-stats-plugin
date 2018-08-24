@@ -33,10 +33,13 @@ module.exports = class extends Task {
     const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
 
-    const settingsMsgLastMinute = this.client.settings.messages.lastMinute;
+    let settingsMsgLastMinute = this.client.settings.messages.lastMinute;
 
     if (!settingsMsgLastMinute.some(x => x.timestamp === timestamp)) {
-      if (settingsMsgLastMinute.length >= 60) settingsMsgLastMinute.shift();
+      if (settingsMsgLastMinute.length >= 60) {
+        settingsMsgLastMinute = settingsMsgLastMinute
+          .slice(Math.max(settingsMsgLastMinute.length - 59, 0));
+      }
       settingsMsgLastMinute.push({
         timestamp,
         count: this.client.stats.messages.lastMinute,
@@ -57,9 +60,12 @@ module.exports = class extends Task {
     const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
 
-    const settingsCmdLastMinute = this.client.settings.commands.lastMinute;
+    let settingsCmdLastMinute = this.client.settings.commands.lastMinute;
     if (!settingsCmdLastMinute.some(x => x.timestamp === timestamp)) {
-      if (settingsCmdLastMinute.length >= 60) settingsCmdLastMinute.shift();
+      if (settingsCmdLastMinute.length >= 60) {
+        settingsCmdLastMinute = settingsCmdLastMinute
+          .slice(Math.max(settingsCmdLastMinute.length - 59, 0));
+      }
 
       settingsCmdLastMinute.push({
         timestamp,
