@@ -33,32 +33,44 @@ module.exports = class extends Task {
     const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
 
-    const msgLastMinute = this.client.stats.messages.lastMinute;
     const settingsMsgLastMinute = this.client.settings.messages.lastMinute;
-    if (settingsMsgLastMinute.length >= 60) settingsMsgLastMinute.shift();
-    settingsMsgLastMinute.push({
-      timestamp,
-      count: msgLastMinute,
-    });
-    await this.client.settings.update('messages.lastMinute', settingsMsgLastMinute, { action: 'overwrite' });
+
+    if (!settingsMsgLastMinute.some(x => x.timestamp === timestamp)) {
+      if (settingsMsgLastMinute.length >= 60) settingsMsgLastMinute.shift();
+      settingsMsgLastMinute.push({
+        timestamp,
+        count: this.client.stats.messages.lastMinute,
+      });
+
+      await this.client.settings.update('messages.lastMinute', settingsMsgLastMinute, {
+        force: true,
+        action: 'overwrite',
+      });
+    }
 
     /* Commands Stats */
     const cmdRan = mergeRuntime(this.client.settings.commands.ran,
       mapToObj(this.client.stats.commands.ran));
-    await this.client.settings.update('commands.ran', cmdRan);
+    await this.client.settings.update('commands.ran', cmdRan, { force: true });
 
 
     const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
 
-    const cmdLastMinute = this.client.stats.commands.lastMinute;
     const settingsCmdLastMinute = this.client.settings.commands.lastMinute;
-    if (settingsCmdLastMinute.length >= 60) settingsCmdLastMinute.shift();
-    settingsCmdLastMinute.push({
-      timestamp,
-      count: cmdLastMinute,
-    });
-    await this.client.settings.update('commands.lastMinute', settingsCmdLastMinute, { action: 'overwrite' });
+    if (!settingsCmdLastMinute.some(x => x.timestamp === timestamp)) {
+      if (settingsCmdLastMinute.length >= 60) settingsCmdLastMinute.shift();
+
+      settingsCmdLastMinute.push({
+        timestamp,
+        count: this.client.stats.commands.lastMinute,
+      });
+
+      await this.client.settings.update('commands.lastMinute', settingsCmdLastMinute, {
+        force: true,
+        action: 'overwrite',
+      });
+    }
 
     this.client.stats.commands.lastMinute = 0;
     this.client.stats.messages.lastMinute = 0;
