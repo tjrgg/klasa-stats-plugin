@@ -19,7 +19,7 @@ const mergeRuntime = (a, b) => {
     const newExecutions = obj[key].executions.concat(data.executions);
     obj[key] = {
       count: obj[key].count + data.count,
-      executions: newExecutions.slice(Math.max(newExecutions.length - 60, 1)),
+      executions: newExecutions.slice(Math.max(newExecutions.length - 5, 0)),
     };
   });
   return obj;
