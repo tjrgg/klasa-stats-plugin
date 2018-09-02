@@ -22,6 +22,18 @@ class StatsClient extends Client {
         lastMinute: 0,
       },
     };
+    this.guildStatsSchema = {
+      commands: {
+        overall: 0,
+        ran: {},
+        lastHour: 0,
+      },
+      messages: {
+        overall: 0,
+        lastHour: 0,
+      },
+    };
+    this.guildStats = {};
 
     this.tasks.registerCoreDirectory(join(__dirname, '..', '/'));
     this.finalizers.registerCoreDirectory(join(__dirname, '..', '/'));
