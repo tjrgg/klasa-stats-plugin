@@ -30,22 +30,22 @@ module.exports = class extends Task {
     const timestamp = unixTs();
 
     /* Messages Stats */
-    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
+    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.pastHour;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
 
-    let settingsMsgLastMinute = this.client.settings.messages.lastMinute;
+    let settingsMsgPastHour = this.client.settings.messages.pastHour;
 
-    if (!settingsMsgLastMinute.some(x => x.timestamp === timestamp)) {
-      if (settingsMsgLastMinute.length >= 60) {
-        settingsMsgLastMinute = settingsMsgLastMinute
-          .slice(Math.max(settingsMsgLastMinute.length - 59, 0));
+    if (!settingsMsgPastHour.some(x => x.timestamp === timestamp)) {
+      if (settingsMsgPastHour.length >= 60) {
+        settingsMsgPastHour = settingsMsgPastHour
+          .slice(Math.max(settingsMsgPastHour.length - 59, 0));
       }
-      settingsMsgLastMinute.push({
+      settingsMsgPastHour.push({
         timestamp,
-        count: this.client.stats.messages.lastMinute,
+        count: this.client.stats.messages.pastHour,
       });
 
-      await this.client.settings.update('messages.lastMinute', settingsMsgLastMinute, {
+      await this.client.settings.update('messages.pastHour', settingsMsgPastHour, {
         force: true,
         action: 'overwrite',
       });
@@ -57,29 +57,29 @@ module.exports = class extends Task {
     await this.client.settings.update('commands.ran', cmdRan, { force: true });
 
 
-    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
+    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.pastHour;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
 
-    let settingsCmdLastMinute = this.client.settings.commands.lastMinute;
-    if (!settingsCmdLastMinute.some(x => x.timestamp === timestamp)) {
-      if (settingsCmdLastMinute.length >= 60) {
-        settingsCmdLastMinute = settingsCmdLastMinute
-          .slice(Math.max(settingsCmdLastMinute.length - 59, 0));
+    let settingsCmdPastHour = this.client.settings.commands.pastHour;
+    if (!settingsCmdPastHour.some(x => x.timestamp === timestamp)) {
+      if (settingsCmdPastHour.length >= 60) {
+        settingsCmdPastHour = settingsCmdPastHour
+          .slice(Math.max(settingsCmdPastHour.length - 59, 0));
       }
 
-      settingsCmdLastMinute.push({
+      settingsCmdPastHour.push({
         timestamp,
-        count: this.client.stats.commands.lastMinute,
+        count: this.client.stats.commands.pastHour,
       });
 
-      await this.client.settings.update('commands.lastMinute', settingsCmdLastMinute, {
+      await this.client.settings.update('commands.pastHour', settingsCmdPastHour, {
         force: true,
         action: 'overwrite',
       });
     }
 
-    this.client.stats.commands.lastMinute = 0;
-    this.client.stats.messages.lastMinute = 0;
+    this.client.stats.commands.pastHour = 0;
+    this.client.stats.messages.pastHour = 0;
   }
 
   async init() {
