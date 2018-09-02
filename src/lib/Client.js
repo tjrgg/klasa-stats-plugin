@@ -15,11 +15,11 @@ class StatsClient extends Client {
       commands: {
         overall: 0,
         ran: new Collection(),
-        pastHour: 0,
+        lastMinute: 0,
       },
       messages: {
         overall: 0,
-        pastHour: 0,
+        lastMinute: 0,
       },
     };
 

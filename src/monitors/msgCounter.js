@@ -11,7 +11,7 @@ module.exports = class extends Monitor {
   }
 
   async run() {
-    this.client.stats.messages.pastHour += 1;
+    this.client.stats.messages.lastMinute += 1;
     this.client.stats.messages.overall += 1;
   }
 };

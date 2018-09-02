@@ -30,7 +30,7 @@ module.exports = class extends Task {
     const timestamp = unixTs();
 
     /* Messages Stats */
-    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.pastHour;
+    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
 
     let settingsMsgPastHour = this.client.settings.messages.pastHour;
@@ -42,7 +42,7 @@ module.exports = class extends Task {
       }
       settingsMsgPastHour.push({
         timestamp,
-        count: this.client.stats.messages.pastHour,
+        count: this.client.stats.messages.lastMinute,
       });
 
       await this.client.settings.update('messages.pastHour', settingsMsgPastHour, {
@@ -57,7 +57,7 @@ module.exports = class extends Task {
     await this.client.settings.update('commands.ran', cmdRan, { force: true });
 
 
-    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.pastHour;
+    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
 
     let settingsCmdPastHour = this.client.settings.commands.pastHour;
@@ -69,7 +69,7 @@ module.exports = class extends Task {
 
       settingsCmdPastHour.push({
         timestamp,
-        count: this.client.stats.commands.pastHour,
+        count: this.client.stats.commands.lastMinute,
       });
 
       await this.client.settings.update('commands.pastHour', settingsCmdPastHour, {
