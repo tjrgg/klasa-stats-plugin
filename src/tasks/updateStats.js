@@ -78,8 +78,8 @@ module.exports = class extends Task {
       });
     }
 
-    this.client.stats.commands.pastHour = 0;
-    this.client.stats.messages.pastHour = 0;
+    this.client.stats.commands.lastMinute = 0;
+    this.client.stats.messages.lastMinute = 0;
   }
 
   async init() {
