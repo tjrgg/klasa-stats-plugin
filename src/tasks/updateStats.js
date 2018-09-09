@@ -1,4 +1,5 @@
 const { Task } = require('klasa');
+const { Collection } = require('discord.js');
 
 const unixTs = () => Math.round((new Date()).getTime() / 1000);
 
@@ -29,6 +30,12 @@ module.exports = class extends Task {
   async run() {
     const timestamp = unixTs();
 
+    const msgLastMinute = this.client.stats.messages.lastMinute;
+    const cmdLastMinute = this.client.stats.commands.lastMinute;
+
+    this.client.stats.commands.lastMinute = 0;
+    this.client.stats.messages.lastMinute = 0;
+
     /* Messages Stats */
     const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
@@ -42,7 +49,7 @@ module.exports = class extends Task {
       }
       settingsMsgPastHour.push({
         timestamp,
-        count: this.client.stats.messages.lastMinute,
+        count: msgLastMinute,
       });
 
       await this.client.settings.update('messages.pastHour', settingsMsgPastHour, {
@@ -55,7 +62,7 @@ module.exports = class extends Task {
     const cmdRan = mergeRuntime(this.client.settings.commands.ran,
       mapToObj(this.client.stats.commands.ran));
     await this.client.settings.update('commands.ran', cmdRan, { force: true });
-
+    this.client.stats.commands.ran = new Collection();
 
     const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
@@ -69,7 +76,7 @@ module.exports = class extends Task {
 
       settingsCmdPastHour.push({
         timestamp,
-        count: this.client.stats.commands.lastMinute,
+        count: cmdLastMinute,
       });
 
       await this.client.settings.update('commands.pastHour', settingsCmdPastHour, {
@@ -77,9 +84,6 @@ module.exports = class extends Task {
         action: 'overwrite',
       });
     }
-
-    this.client.stats.commands.lastMinute = 0;
-    this.client.stats.messages.lastMinute = 0;
   }
 
   async init() {
