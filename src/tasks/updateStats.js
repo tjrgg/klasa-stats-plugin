@@ -30,7 +30,7 @@ module.exports = class extends Task {
     this.client.stats.messages.lastMinute = 0;
 
     /* Messages Stats */
-    const msgCount = this.client.settings.messages.overall + this.client.stats.messages.lastMinute;
+    const msgCount = this.client.settings.messages.overall + msgLastMinute;
     await this.client.settings.update('messages.overall', msgCount, { force: true });
 
     let settingsMsgPastHour = this.client.settings.messages.pastHour;
@@ -56,7 +56,7 @@ module.exports = class extends Task {
     await this.client.settings.update('commands.ran', cmdRan, { force: true });
     this.client.stats.commands.ran = {};
 
-    const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
+    const cmdCount = this.client.settings.commands.overall + cmdLastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
 
     let settingsCmdPastHour = this.client.settings.commands.pastHour;
