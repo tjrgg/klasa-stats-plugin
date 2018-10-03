@@ -14,7 +14,7 @@ class StatsClient extends Client {
     this.stats = {
       commands: {
         overall: 0,
-        ran: new Collection(),
+        ran: {},
         lastMinute: 0,
       },
       messages: {

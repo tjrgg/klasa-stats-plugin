@@ -3,26 +3,19 @@ const { Collection } = require('discord.js');
 
 const unixTs = () => Math.round((new Date()).getTime() / 1000);
 
-const mapToObj = (aMap) => {
-  const obj = {};
-  aMap.forEach((v, k) => { obj[k] = v; });
-  return obj;
-};
-
 const mergeRuntime = (a, b) => {
   const obj = a;
-  Object.keys(b).forEach((key) => {
-    const data = b[key];
+  for (const [key, value] in Object.entries(b)) {
     if (obj[key] === undefined) {
-      obj[key] = data;
-      return;
+      obj[key] = value;
+      continue;
     }
-    const newExecutions = obj[key].executions.concat(data.executions);
+    const newExecutions = [...obj[key].executions, ...value.executions];
     obj[key] = {
-      count: obj[key].count + data.count,
+      count: obj[key].count + value.count,
       executions: newExecutions.slice(Math.max(newExecutions.length - 5, 0)),
     };
-  });
+  }
   return obj;
 };
 
@@ -59,10 +52,9 @@ module.exports = class extends Task {
     }
 
     /* Commands Stats */
-    const cmdRan = mergeRuntime(this.client.settings.commands.ran,
-      mapToObj(this.client.stats.commands.ran));
+    const cmdRan = mergeRuntime(this.client.settings.commands.ran, this.client.stats.commands.ran);
     await this.client.settings.update('commands.ran', cmdRan, { force: true });
-    this.client.stats.commands.ran = new Collection();
+    this.client.stats.commands.ran = {};
 
     const cmdCount = this.client.settings.commands.overall + this.client.stats.commands.lastMinute;
     await this.client.settings.update('commands.overall', cmdCount, { force: true });
